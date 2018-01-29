@@ -33,7 +33,7 @@ public class DBUtil  {
         String result = "";
         try
         {
-            Connection conn = getSQLConnection("17.17.18.100", "sa", "sa", "bqdata");
+            Connection conn = getSQLConnection("172.17.182.100", "ytsoft", "146-164-154-", "bqdata_new");
             //String sql = "select top 10 * from bq_czy";
             String sql=" select top 10 a.被锁进程ID,a.被锁状态,a.被锁进程用户主机,c.ksmc 锁进程主机位置,a.被锁进程数据名称,a.被锁进程命令"+
                                                " ,b.锁进程ID,b.锁状态,b.锁进程用户主机,b.锁进程数据名称,b.锁进程命令"+
@@ -46,7 +46,7 @@ public class DBUtil  {
                     " from master..sysprocesses "+
                     " ) as b on a.锁进程ID=b.锁进程ID "+
                     " left join (select ksmc,replace([mac_address],'-','')mac_address  "+
-                   " from openrowset('SQLOLEDB ', '17.17.18.200'; 'sa'; 'sa',[Blog_new].[dbo].[Mac_new])) as c  "+
+                   " from openrowset('SQLOLEDB ', '172.17.180.200'; 'psa'; '146-164-154-',[Blog_new].[dbo].[Mac_new])) as c  "+
                     " on b.MAC地址=c.mac_address";
             Statement stmt = conn.createStatement();//
             ResultSet rs = stmt.executeQuery(sql);
@@ -54,8 +54,12 @@ public class DBUtil  {
             {
                 String s1 = rs.getString("锁进程ID");
                 String s2 = rs.getString("锁进程命令");
-                result += s1 + "  -  " + s2 + "\n";
-                System.out.println(s1 + "  -  " + s2);
+                String s3 = rs.getString("锁进程主机位置");
+                String s4 = rs.getString("锁进程用户主机");
+                String s5 = rs.getString("被锁进程ID");
+
+                result += s1 + "  -  " + s2 + "-"+ s3 +"-"+ s4 +"-"+ s5 +"\n";
+                System.out.println(s1 + "  -  " + s2+"+"+s3);
             }
             rs.close();
             stmt.close();
@@ -64,6 +68,61 @@ public class DBUtil  {
         {
             e.printStackTrace();
             result += "查询数据异常!" + e.getMessage();
+        }
+        return result;
+    }
+    public static String QueryCmd(Integer blk)
+    {
+        String result = "";
+        try
+        {
+            Connection conn = getSQLConnection("172.17.182.100", "ytsoft", "146-164-154-", "bqdata_new");
+            //String sql = "select top 10 * from bq_czy";
+            String sql="DBCC INPUTBUFFER( "+blk+" )";
+            Statement stmt = conn.createStatement();//
+            ResultSet rs = stmt.executeQuery(sql);
+           while (rs.next())
+            {
+                String s1 = rs.getString(3);
+
+                result += s1 +"-"+"\n";
+                System.out.println(s1+"+" );
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            result += "查询数据异常!" + e.getMessage();
+        }
+        return result;
+    }
+    public static String QueryUnlock(Integer blk)
+    {
+        String result = "";
+        try
+        {
+            Connection conn = getSQLConnection("172.17.182.100", "ytsoft", "146-164-154-", "bqdata_new");
+            //String sql = "select top 10 * from bq_czy";
+            String sql="kill "+blk+" ";
+            Statement stmt = conn.createStatement();//
+            stmt.executeUpdate(sql);
+//            while (rs.next())
+//            {
+//                String s1 = rs.getString(0);
+//
+//                result += s1 +"-"+"\n";
+//                System.out.println(s1+"+" );
+//            }
+            System.out.println("解锁成功" );
+            result="解锁成功";
+            stmt.close();
+            conn.close();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            result += "数据异常!" + e.getMessage();
         }
         return result;
     }

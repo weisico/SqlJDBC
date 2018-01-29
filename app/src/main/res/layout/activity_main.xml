@@ -10,18 +10,43 @@
         android:id="@+id/btnTestSql"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/testSQL"/>
+        android:text= "刷新"/>
     <Button
         android:id="@+id/btnClean"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/btnTestSql"
         android:text="@string/clean"/>
+    <EditText
+        android:id="@+id/tvCmd"
+        android:layout_width="100dp"
+        android:layout_height="39dp"
+        android:layout_toLeftOf="@id/btnGet"
+        android:layout_below="@id/btnTestSql"
+        android:inputType="number"
+        android:hint="请输入进程ID" />
+
+    <Button
+        android:id="@+id/btnUnlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/btnClean"
+        android:layout_below="@id/btnTestSql"
+        android:text="解锁"/>
+    <Button
+        android:id="@+id/btnGet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/btnUnlock"
+        android:layout_below="@id/btnTestSql"
+        android:text="@string/viewCmd"/>
     <TextView
         android:id="@+id/tvTestResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnTestSql"
-        android:text="@string/hello_world" />
+        android:scrollbars = "vertical"
+        android:layout_below="@id/btnClean"
+        android:text="T-SQL进程列表" />
 
 </RelativeLayout>
